@@ -1,17 +1,33 @@
-# Java
+# 1. 编译产物 (Maven/Gradle)
 target/
+build/
+out/
 *.class
-*.jar
-*.war
 
-# Node/Vue
-node_modules/
-dist/
-.env.local
-
-# IDE
+# 2. IDE 配置文件 (IntelliJ IDEA / Eclipse)
 .idea/
-.vscode/
 *.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
 
-**/application.properties
+# 3. 系统垃圾文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 4. 日志文件
+*.log
+logs/
+
+# 5. ⚠️ 敏感配置文件 (最重要！)
+# 忽略所有包含 local, dev, prod 的配置文件，防止数据库密码上传
+application-local.yml
+application-local.properties
+application-dev.yml
+application-prod.yml
+*.key
+*.pem

@@ -1,0 +1,17 @@
+# Java
+target/
+*.class
+*.jar
+*.war
+
+# Node/Vue
+node_modules/
+dist/
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+**/application.properties

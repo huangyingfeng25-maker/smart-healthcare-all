@@ -2,6 +2,7 @@ package com.atguigu.yygh.hosp.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atguigu.yygh.common.exception.YyghException;
+import com.atguigu.yygh.common.result.ResultCodeEnum;
 import com.atguigu.yygh.hosp.repository.ScheduleRepository;
 import com.atguigu.yygh.hosp.service.DepartmentService;
 import com.atguigu.yygh.hosp.service.HospitalService;
@@ -66,19 +67,19 @@ public class ScheduleServiceImpl implements ScheduleService {
         //医院实体数据
         Hospital hospital = hospitalService.getHosp(schedule.getHoscode());
         if (hospital==null){
-            throw new YyghException();
+            throw new YyghException(204,"数据异常");
         }
 
         //科室实体数据
         Department department = departmentService.getDepartment(schedule.getHoscode(), schedule.getDepcode());
         if(department==null){
-            throw new YyghException();
+            throw new YyghException(204,"数据异常");
         }
 
         //医院预约规则
         BookingRule bookingRule = hospital.getBookingRule();
         if(bookingRule==null){
-            throw new YyghException();
+            throw new YyghException(204,"数据异常");
         }
 
         scheduleOrderVo.setHoscode(schedule.getHoscode());

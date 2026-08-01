@@ -10,4 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Repository
 public interface HospitalFeignClient {
 
+    //根据排班id查询预约挂号的相关数据
+    @GetMapping("inner/getScheduleOrderVo/{scheduleId}")
+    public ScheduleOrderVo getScheduleOrderVo(@PathVariable("scheduleId")String scheduleId);
+
 }

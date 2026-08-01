@@ -1,6 +1,7 @@
 package com.atguigu.yygh.hosp.service;
 
 import com.atguigu.yygh.model.hosp.Schedule;
+import com.atguigu.yygh.vo.hosp.ScheduleOrderVo;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -30,4 +31,6 @@ public interface ScheduleService {
     //获取排班详情
     Schedule getScheduleId(String id);
 
+    //根据排班id查询预约挂号的相关数据
+    ScheduleOrderVo getScheduleOrderVo(String scheduleId);
 }

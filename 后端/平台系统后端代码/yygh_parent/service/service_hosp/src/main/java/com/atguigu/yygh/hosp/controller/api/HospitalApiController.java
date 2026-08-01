@@ -35,6 +35,13 @@ public class HospitalApiController {
     @Autowired
     private ScheduleService scheduleService;
 
+    //根据排班id查询预约挂号的相关数据
+    @GetMapping("inner/getScheduleOrderVo/{scheduleId}")
+    public ScheduleOrderVo getScheduleOrderVo(@PathVariable("scheduleId")String scheduleId){
+        ScheduleOrderVo orderVo=scheduleService.getScheduleOrderVo(scheduleId);
+        return orderVo;
+    }
+
     @Operation(description = "获取排班详情")
     @GetMapping("getSchedule/{id}")
     public R getScheduleList(

@@ -1,6 +1,7 @@
 package com.atguigu.yygh.hosp.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.atguigu.yygh.common.exception.YyghException;
 import com.atguigu.yygh.hosp.repository.ScheduleRepository;
 import com.atguigu.yygh.hosp.service.DepartmentService;
 import com.atguigu.yygh.hosp.service.HospitalService;
@@ -10,6 +11,7 @@ import com.atguigu.yygh.model.hosp.Department;
 import com.atguigu.yygh.model.hosp.Hospital;
 import com.atguigu.yygh.model.hosp.Schedule;
 import com.atguigu.yygh.vo.hosp.BookingScheduleRuleVo;
+import com.atguigu.yygh.vo.hosp.ScheduleOrderVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -21,7 +23,6 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,78 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Autowired
     private DepartmentService departmentService;
+
+
+    /**
+     * 将Date日期（yyyy-MM-dd HH:mm）转换为DateTime
+     */
+    private DateTime getDateTime(Date date, String timeString) {
+        String dateTimeString = new DateTime(date).toString("yyyy-MM-dd") + " " + timeString;
+        DateTime dateTime = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm").parseDateTime(dateTimeString);
+        return dateTime;
+    }
+
+    //根据排班id查询预约挂号的相关数据
+    @Override
+    public ScheduleOrderVo getScheduleOrderVo(String scheduleId) {
+        ScheduleOrderVo scheduleOrderVo=new ScheduleOrderVo();
+        //1.根据排班id查询mong0排班实体对象
+        Optional<Schedule> scheduleOptional = scheduleRepository.findById(scheduleId);
+        if(!scheduleOptional.isPresent()){
+            throw new YyghException();
+        }
+        //排班实体数据
+        Schedule schedule = scheduleOptional.get();
+
+        //医院实体数据
+        Hospital hospital = hospitalService.getHosp(schedule.getHoscode());
+        if (hospital==null){
+            throw new YyghException();
+        }
+
+        //科室实体数据
+        Department department = departmentService.getDepartment(schedule.getHoscode(), schedule.getDepcode());
+        if(department==null){
+            throw new YyghException();
+        }
+
+        //医院预约规则
+        BookingRule bookingRule = hospital.getBookingRule();
+        if(bookingRule==null){
+            throw new YyghException();
+        }
+
+        scheduleOrderVo.setHoscode(schedule.getHoscode());
+        scheduleOrderVo.setHosname(hospital.getHosname());
+        scheduleOrderVo.setDepcode(schedule.getDepcode());
+        scheduleOrderVo.setDepname(department.getDepname());
+        scheduleOrderVo.setHosScheduleId(schedule.getHosScheduleId());
+        scheduleOrderVo.setTitle(schedule.getTitle());
+        scheduleOrderVo.setReserveDate(schedule.getWorkDate());
+        scheduleOrderVo.setAvailableNumber(schedule.getAvailableNumber());
+        scheduleOrderVo.setReserveTime(schedule.getWorkTime());//0-上午 1-下午
+        scheduleOrderVo.setAmount(schedule.getAmount());
+
+        //封装相关时间- 相应处理
+
+        //最晚退号的时间
+        Integer quitDay = bookingRule.getQuitDay();
+        DateTime quitTime = this.getDateTime(new DateTime(schedule.getWorkDate()).plusDays(quitDay).toDate(), bookingRule.getQuitTime());
+        scheduleOrderVo.setQuitTime(quitTime.toDate());
+
+        //可以预约的开始时间
+        DateTime setStartTime = this.getDateTime(new Date(), bookingRule.getReleaseTime());
+        scheduleOrderVo.setStartTime(setStartTime.toDate());
+
+        //可以预约的结束时间
+        DateTime setEndTime = this.getDateTime(new DateTime(new Date()).plusDays(bookingRule.getCycle()).toDate(), bookingRule.getStopTime());
+        scheduleOrderVo.setEndTime(setEndTime.toDate());
+
+        //当天截止时间
+        scheduleOrderVo.setStopTime(this.getDateTime(new Date(),bookingRule.getStopTime()).toDate());
+        return scheduleOrderVo;
+    }
+
 
     //上传排班
     @Override
@@ -360,14 +433,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         return iPage;
     }
 
-    /**
-     * 将Date日期（yyyy-MM-dd HH:mm）转换为DateTime
-     */
-    private DateTime getDateTime(Date date, String timeString) {
-        String dateTimeString = new DateTime(date).toString("yyyy-MM-dd") + " " + timeString;
-        DateTime dateTime = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm").parseDateTime(dateTimeString);
-        return dateTime;
-    }
 
     /**
      * 根据日期获取周几数据

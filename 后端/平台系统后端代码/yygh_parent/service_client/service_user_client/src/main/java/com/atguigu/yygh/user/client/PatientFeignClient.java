@@ -10,4 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Repository
 public interface PatientFeignClient {
 
+    //远程接口：辅助下单（预约挂号）业务
+    @GetMapping("/api/user/patient/inner/getPatientInfo/{id}")
+    public Patient getPatientInfoById(@PathVariable("id") Long id);
 }

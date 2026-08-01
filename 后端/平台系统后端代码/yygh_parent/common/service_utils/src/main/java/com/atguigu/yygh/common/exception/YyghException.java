@@ -14,7 +14,7 @@ public class YyghException extends RuntimeException {
 
     private String msg;  //异常描述
 
-    // ⭐ 新增：直接接收枚举对象的构造器
+    // 新增：直接接收枚举对象的构造器
     public YyghException(ResultCodeEnum resultCodeEnum) {
         super(resultCodeEnum.getMessage()); // 从枚举里取出信息交给父类
         this.code = resultCodeEnum.getCode(); // 从枚举里取出状态码

@@ -22,6 +22,12 @@ public class PatientController {
     @Autowired
     private PatientService patientService;
 
+    //挂号下单业务辅助远程接口:根据就诊人id获取就诊人实体对象数据
+    @GetMapping("inner/getPatientInfo/{id}")
+    public Patient getPatientInfoById(@PathVariable("id") Long id) {
+        return patientService.getById(id);
+    }
+
     //根据id获取就诊人信息
     @GetMapping("auth/get/{id}")
     public R getPatient(@PathVariable Long id) {

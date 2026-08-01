@@ -67,19 +67,19 @@ public class ScheduleServiceImpl implements ScheduleService {
         //医院实体数据
         Hospital hospital = hospitalService.getHosp(schedule.getHoscode());
         if (hospital==null){
-            throw new YyghException(204,"数据异常");
+            throw new YyghException(ResultCodeEnum.CODE_ERROR);
         }
 
         //科室实体数据
         Department department = departmentService.getDepartment(schedule.getHoscode(), schedule.getDepcode());
         if(department==null){
-            throw new YyghException(204,"数据异常");
+            throw new YyghException(ResultCodeEnum.CODE_ERROR);
         }
 
         //医院预约规则
         BookingRule bookingRule = hospital.getBookingRule();
         if(bookingRule==null){
-            throw new YyghException(204,"数据异常");
+            throw new YyghException(ResultCodeEnum.CODE_ERROR);
         }
 
         scheduleOrderVo.setHoscode(schedule.getHoscode());

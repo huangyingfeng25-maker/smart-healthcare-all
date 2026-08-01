@@ -59,7 +59,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         //1.根据排班id查询mong0排班实体对象
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(scheduleId);
         if(!scheduleOptional.isPresent()){
-            throw new YyghException();
+            throw new YyghException(ResultCodeEnum.CODE_ERROR);
         }
         //排班实体数据
         Schedule schedule = scheduleOptional.get();

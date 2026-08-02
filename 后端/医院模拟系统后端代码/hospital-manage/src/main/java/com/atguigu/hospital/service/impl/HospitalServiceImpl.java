@@ -55,34 +55,34 @@ public class HospitalServiceImpl implements HospitalService {
         Patient patient = JSONObject.parseObject(JSONObject.toJSONString(paramMap), Patient.class);
         log.info(JSONObject.toJSONString(patient));
         //处理就诊人业务
-        Long patientId = this.savePatient(patient);
+        Long patientId = this.savePatient(patient);////医院端保存就诊人表的主键。与挂号平台用户微服务的救人者表的主键值可能不一样。
 
         Map<String, Object> resultMap = new HashMap<>();
         int availableNumber = schedule.getAvailableNumber().intValue() - 1;
-        if (availableNumber > 0) {
+        if (availableNumber >= 0) {
             schedule.setAvailableNumber(availableNumber);
-            hospitalMapper.updateById(schedule);
+            hospitalMapper.updateById(schedule);//更新医院排班表的可预约号数量。
 
             //记录预约记录
             OrderInfo orderInfo = new OrderInfo();
             orderInfo.setPatientId(patientId);
-            orderInfo.setScheduleId(Long.parseLong("1"));
+            orderInfo.setScheduleId(Long.parseLong("1"));//临时测试的数据
             int number = schedule.getReservedNumber().intValue() - schedule.getAvailableNumber().intValue();
-            orderInfo.setNumber(number);
-            orderInfo.setAmount(new BigDecimal(amount));
-            String fetchTime = "0".equals(reserveDate) ? " 09:30前" : " 14:00前";
-            orderInfo.setFetchTime(reserveTime + fetchTime);
-            orderInfo.setFetchAddress("一楼9号窗口");
+            orderInfo.setNumber(number);//挂号的序号 第几号
+            orderInfo.setAmount(new BigDecimal(amount));//挂号费
+            String fetchTime = "0".equals(reserveDate) ? " 09:30前" : " 14:00前";//下单表保存取号推荐时间
+            orderInfo.setFetchTime(reserveTime + fetchTime);//取号：日期+时间
+            orderInfo.setFetchAddress("一楼9号窗口");//取号地点
             //默认 未支付
-            orderInfo.setOrderStatus(0);
-            orderInfoMapper.insert(orderInfo);
+            orderInfo.setOrderStatus(0);//0下单未支付 1 已支付 2取消 -1取消挂号 自己规定
+            orderInfoMapper.insert(orderInfo);//医院端保存订单
 
             resultMap.put("resultCode", "0000");
             resultMap.put("resultMsg", "预约成功");
             //预约记录唯一标识（医院预约记录主键）
-            resultMap.put("hosRecordId", orderInfo.getId());
+            resultMap.put("hosRecordId", orderInfo.getId());//订单好主键
             //预约号序
-            resultMap.put("number", number);
+            resultMap.put("number", number);//序号
             //取号时间
             resultMap.put("fetchTime", reserveDate + "09:00前");
 
@@ -90,7 +90,7 @@ public class HospitalServiceImpl implements HospitalService {
             resultMap.put("fetchAddress", "一层114窗口");
 
             //排班可预约数
-            resultMap.put("reservedNumber", schedule.getReservedNumber());
+            resultMap.put("reservedNumber", schedule.getReservedNumber());//一共可预约总数
             //排班剩余预约数
             resultMap.put("availableNumber", schedule.getAvailableNumber());
         } else {

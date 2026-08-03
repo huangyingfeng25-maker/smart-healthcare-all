@@ -33,4 +33,7 @@ public interface ScheduleService {
 
     //根据排班id查询预约挂号的相关数据
     ScheduleOrderVo getScheduleOrderVo(String scheduleId);
+
+    //更新排班信息
+    void update(Schedule schedule);
 }

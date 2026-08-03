@@ -43,6 +43,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     private DepartmentService departmentService;
 
 
+    @Override
+    public void update(Schedule schedule) {
+        schedule.setUpdateTime(new Date());
+        scheduleRepository.save(schedule);//保存或者修改  由id决定 _id不存在进行保存，存在做修改
+    }
+
+
     /**
      * 将Date日期（yyyy-MM-dd HH:mm）转换为DateTime
      */

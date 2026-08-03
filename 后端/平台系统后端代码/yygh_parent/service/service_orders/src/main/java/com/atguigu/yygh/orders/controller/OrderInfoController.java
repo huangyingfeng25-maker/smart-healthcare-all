@@ -5,10 +5,10 @@ import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowItem;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRuleManager;
 import com.atguigu.yygh.common.result.R;
+import com.atguigu.yygh.model.order.OrderInfo;
 import com.atguigu.yygh.orders.service.OrderInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +26,20 @@ public class OrderInfoController {
 
     @Autowired
     OrderInfoService orderInfoService;
+
+    //根据订单id查询订单详情
+    @GetMapping("auth/getOrders/{orderId}")
+    public R getOrders(@PathVariable Long orderId) {
+        OrderInfo orderInfo = orderInfoService.getOrderInfo(orderId);
+        return R.ok().data("orderInfo",orderInfo);
+    }
+
+    //根据排班id 和 就诊人id 生成挂号订单
+    @PostMapping("auth/submitOrder/{scheduleId}/{patientId}")
+    public R submitOrder(@PathVariable String scheduleId, @PathVariable Long patientId){
+        Long orderId=orderInfoService.createOrder(scheduleId,patientId);
+        return R.ok().data("orderId",orderId);
+    }
 
 
     /**

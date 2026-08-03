@@ -8,4 +8,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface OrderInfoService extends IService<OrderInfo> {
 
+    //平台下单
+    Long createOrder(String scheduleId, Long patientId);
+
+    //获取订单详情
+    OrderInfo getOrderInfo(Long orderId);
 }

@@ -16,6 +16,8 @@ public class RandomUtil {
 
     public static String getFourBitRandom() {
         return fourdf.format(random.nextInt(10000));
+        //如果生成的数字不足 4 位，会在前面自动补 0。
+        //返回一个固定长度为 4 位的数字字符串
     }
 
     public static String getSixBitRandom() {

@@ -143,7 +143,7 @@ export default {
                 })
         },
         //分页，页码变化
-        changeSize() {
+        changeSize(size) {
             this.limit = size
             this.fetchData(1)
         },

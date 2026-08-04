@@ -23,7 +23,7 @@ public class MsmController {
     private RedisTemplate<String, String> redisTemplate;
 
     //根据手机号发送短信验证码
-    @PostMapping(value = "/send/{phone}")
+    @GetMapping(value = "/send/{phone}")
     public R code(@PathVariable String phone) {
 
         String code = redisTemplate.opsForValue().get(phone);

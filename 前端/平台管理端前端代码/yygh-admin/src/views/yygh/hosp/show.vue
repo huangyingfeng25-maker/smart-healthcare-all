@@ -1,5 +1,5 @@
 <template>
-<div class="app-container">
+<div class="app-container" v-if="hospital && bookingRule">
     <h4>基本信息</h4>
     <table class="table table-striped table-condenseda table-bordered" width="100%">
         <tbody>
